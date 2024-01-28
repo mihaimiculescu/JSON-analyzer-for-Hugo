@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ .Site.Title }}</title>
+
+    <link rel="stylesheet" href="/src/app.css">
+    <script src="/src/main.js" defer></script>
+</head>
+
+<body>
+    {{ block "body" . }}
+      {{ $TopLevelJSONobject := getJSON "/data/jsonapi.json" }}
+      {{ $CurrentFocus := $TopLevelJSONobject }}
+      {{ $indent := 0 }}
+  <div style="margin-left: {{$indent}}em;">
+      Top-level of JSON API available at <a href="{{ .Site.Params.jsonURL }}"> 
+        {{ .Site.Params.jsonURL }} </a><br><br>
+
+      {{ range $key, $value := $CurrentFocus }}
+        Key "{{ string $key }}" of type {{ printf "%T" $key }}<-> 
+        {{ if or (reflect.IsSlice $value) (reflect.IsMap $value) }} Value of type slice or map <br>
+        {{ else }} Value "{{ string $value }}" of type {{ printf "%T" $value }} <br>
+        {{ end }}
+      {{end}}
+  </div>
+    {{ end }}
+</body>
+
+</html>
